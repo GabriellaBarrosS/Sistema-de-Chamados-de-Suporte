@@ -1,0 +1,150 @@
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import Input from '../components/ui/Input';
+import Button from '../components/ui/Button';
+import categoryService from '../services/categoryService';
+
+export default function AbrirChamado() {
+    const navigate = useNavigate();
+
+  //Estado de armazenamento de dados
+    const [formData, setFormData] = useState({
+        title: '',
+        description: '',
+        categoryId: '',
+        priority: 'MEDIA',
+    });
+    
+    const [categories, setCategories] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
+
+    useEffect(() => {
+        async function loadCategories() {
+            try {
+                const response = await categoryService.getAll();
+                setCategories(response.data || []);
+            } catch (err) {
+                setError('Erro ao carregar categorias', err);
+                setError('Não foi possível carregar as categorias.');
+            }
+        }
+        loadCategories();
+    }, []);
+
+    //Manipulador para atualizar input do formulário
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData((prev) => ({
+            ...prev,
+            [name]: value,
+        }));
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+        setError('');
+
+        //teste de funcionalidade, responsável pelo back-end pode excluir essa etapa posteriormente.
+        try {
+            console.payload = formData;
+
+            alert('Chamado aberto com sucesso!');
+            navigate('/chamados');
+        } catch (err) {
+            console.error('Erro ao abrir chamado:', err);
+            setError('Erro ao abrir chamado. Por favor, tente novamente.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return (
+        <div className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-md mt-6">
+            <h2 className="text-2xl font-semibold mb-4">Abrir Chamado</h2>
+            {error && (
+                <div className="alert alert-error mb-4">{error}</div>
+            )}
+            <form onSubmit={handleSubmit} className="space-y-4">
+                {/*Titulo*/}
+                <div>
+                    <label className="block text-sm font-medium text-gray-700">Título do Chamado</label>
+                    <Input
+                        type="text"
+                        name="title"
+                        value={formData.title}
+                        onChange={handleChange}
+                        placeholder="Digite o título do chamado"
+                        required
+                    />
+                </div>
+
+                {/*Categoria*/}
+                <div>
+                    <label className="block text-sm font-medium text-gray-700">Categoria</label>
+                    <select
+                        name="categoryId"
+                        value={formData.categoryId}
+                        onChange={handleChange}
+                        required
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500" >
+
+                        <option value="">Selecione uma categoria</option>
+                        {categories.map((cat) => (
+                            <option key={cat.id || cat.id} value={cat.id || cat.id}>
+                                {cat.name}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+
+                {/*Prioridade*/}
+                <div>
+                    <label className="block text-sm font-medium text-gray-700">Prioridade</label>
+                    <select
+                        name="priority"
+                        value={formData.priority}
+                        onChange={handleChange}
+                        required
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500" >
+                        <option value="BAIXA">Baixa</option>
+                        <option value="MEDIA">Média</option>
+                        <option value="ALTA">Alta</option>
+                        <option value="URGENTE">Urgente</option>
+                    </select>
+                </div>
+
+                {/*Descrição*/}
+                <div>
+                    <label className="block text-sm font-medium text-gray-700">Descrição</label>
+                    <textarea
+                        name="description"
+                        value={formData.description}
+                        onChange={handleChange}
+                        placeholder="Digite a descrição do chamado"
+                        required
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        rows="4"
+                    />
+                </div>
+                {/*Botões*/}
+                <div className="flex justify-end space-x-3 pt-4">
+                    <Button
+                    type="button"
+                    variant="secondary"
+                    onClick={() => navigate(-1)}
+                    >
+                        Cancelar
+                    </Button>
+                    <Button 
+                    type="submit"
+                    disabled={loading}
+                    >
+                        {loading ? 'Abrindo...' : 'Abrir Chamado'}
+                    </Button>
+                </div>
+            </form>
+        </div>
+    )
+}
