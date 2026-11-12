@@ -10,37 +10,42 @@ import Forbidden from '../pages/Forbidden'
 import NotFound from '../pages/NotFound'
 import Users from '../pages/admin/Users'
 import Categories from '../pages/admin/Categories'
-
+import NewTicket from '../pages/tickets/NewTicket'
+ 
 function PublicOnly({ children }) {
-  const { user } = useAuth()
-  return user ? <Navigate to="/" replace /> : children
+const { user } = useAuth()
+return user ? <Navigate to="/" replace /> : children
 }
-
+ 
 // Leva o usuário para a primeira página do menu do seu perfil
 function Inicio() {
   const { user } = useAuth()
   const primeiro = NAV_ITEMS.find((i) => i.roles.includes(user.perfil))
   return <Navigate to={primeiro.to} replace />
 }
-
+ 
 export default function AppRoutes() {
   return (
     <Routes>
       <Route path="/login" element={<PublicOnly><Login /></PublicOnly>} />
       <Route path="/cadastro" element={<PublicOnly><Register /></PublicOnly>} />
-
+ 
       <Route element={<ProtectedRoute />}>
         <Route path="/" element={<Inicio />} />
         <Route element={<AppLayout />}>
           <Route path="/acesso-negado" element={<Forbidden />} />
-
-          {/* As telas de chamados (cliente e técnico) entram aqui */}
-
+ 
+          {/* Telas do cliente */}
+          <Route element={<ProtectedRoute roles={[ROLES.CLIENTE]} />}>
+            <Route path="/chamados/novo" element={<NewTicket />} />
+          </Route>
+ 
+          {/* As telas de chamados do técnico*/}
           <Route element={<ProtectedRoute roles={[ROLES.ADMIN]} />}>
             <Route path="/admin/usuarios" element={<Users />} />
             <Route path="/admin/categorias" element={<Categories />} />
           </Route>
-
+ 
           <Route path="*" element={<NotFound />} />
         </Route>
       </Route>
