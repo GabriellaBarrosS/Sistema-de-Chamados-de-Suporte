@@ -5,6 +5,7 @@ import { getErrorMessage } from '../../services/api'
 import { PRIORIDADES } from '../../constants'
 import Button from '../../components/ui/Button'
 import { Input, Select, Textarea } from '../../components/ui/Input'
+import { useNavigate } from 'react-router-dom'
 
 const EMPTY = {
   titulo: '',
@@ -25,13 +26,13 @@ function validate(form) {
 }
 
 export default function NewTicket() {
+    const navigate = useNavigate()
     const [form, setForm] = useState(EMPTY)
     const [errors, setErrors] = useState({})
     const [categories, setCategories] = useState([])
     const [loadingCategories, setLoadingCategories] = useState(true)
     const [loadError, setLoadError] = useState('')
     const [submitError, setSubmitError] = useState('')
-    const [success, setSuccess] = useState(false)
     const [saving, setSaving] = useState(false)
 
     useEffect(() => {
@@ -53,13 +54,11 @@ export default function NewTicket() {
         const { name, value } = e.target
         setForm((f) => ({ ...f, [name]: value }))
         setErrors((prev) => ({ ...prev, [name]: undefined }))
-        setSuccess(false)
     }
 
     async function handleSubmit(e) {
         e.preventDefault()
         setSubmitError('')
-        setSuccess(false)
 
         const found = validate(form)
         setErrors(found)
@@ -74,11 +73,9 @@ export default function NewTicket() {
                 categoriaId: categoria.id,
                 prioridade: form.prioridade,
             })
-            setForm(EMPTY)
-            setSuccess(true)
+            navigate('/chamados', { state: { flash: 'Chamado aberto com sucesso!' } })
         } catch (err) {
             setSubmitError(getErrorMessage(err, 'Não foi possível abrir o chamado.'))
-        } finally {
             setSaving(false)
         }
     }
@@ -92,7 +89,6 @@ export default function NewTicket() {
         </div>
 
         <form className="form-card" onSubmit={handleSubmit} noValidate>
-            {success && <div className="alert alert-success">Chamado aberto com sucesso!</div>}
             {submitError && <div className="alert alert-error">{submitError}</div>}
             {semCategorias && (<div className="alert alert-error">Nenhuma categoria cadastrada.</div>)}
 
@@ -143,7 +139,6 @@ export default function NewTicket() {
                         setForm(EMPTY) 
                         setErrors({})
                         setSubmitError('')
-                        setSuccess(false)
                     }}
                 >
                     Limpar
