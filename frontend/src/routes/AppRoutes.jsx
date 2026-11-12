@@ -46,7 +46,7 @@ export default function AppRoutes() {
           </Route>
  
           {/* As telas de chamados do técnico*/}
-                    <Route element={<ProtectedRoute roles={[ROLES.TECNICO]} />}>
+            <Route element={<ProtectedRoute roles={[ROLES.TECNICO]} />}>
             <Route
               path="/fila"
               element={<TicketList title="Fila de atendimento" emptyMessage="Nenhum chamado na fila." showClient />}
