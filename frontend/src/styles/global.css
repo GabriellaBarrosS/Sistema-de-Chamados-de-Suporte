@@ -171,3 +171,14 @@ a { color: var(--cor-principal); }
 .auth-card p { margin: 16px 0 0; text-align: center; font-size: .9rem; }
 .auth-card p.muted { margin: 0 0 18px; text-align: left; }
 .muted { color: var(--texto-suave); }
+
+/* Formulário de tickets */
+.form-card { background: #fff; border: 1px solid var(--borda); padding: 24px; max-width: 640px; }
+.form-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 8px; }
+.alert-success {
+  color: #256c43;
+  background: #eaf6ef;
+  border: 1px solid #a9d6bb;
+  padding: 10px 12px;
+  margin-bottom: 14px;
+}
