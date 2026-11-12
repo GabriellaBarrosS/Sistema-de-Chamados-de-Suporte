@@ -11,6 +11,7 @@ import NotFound from '../pages/NotFound'
 import Users from '../pages/admin/Users'
 import Categories from '../pages/admin/Categories'
 import NewTicket from '../pages/tickets/NewTicket'
+import TicketList from '../pages/tickets/TicketList'
  
 function PublicOnly({ children }) {
 const { user } = useAuth()
@@ -37,13 +38,28 @@ export default function AppRoutes() {
  
           {/* Telas do cliente */}
           <Route element={<ProtectedRoute roles={[ROLES.CLIENTE]} />}>
+            <Route path="/chamados" element={<TicketList 
+            title="Meus Chamados"
+            emptyMessage="Você não tem chamados abertos."
+            canCreate />} />
             <Route path="/chamados/novo" element={<NewTicket />} />
           </Route>
  
           {/* As telas de chamados do técnico*/}
+                    <Route element={<ProtectedRoute roles={[ROLES.TECNICO]} />}>
+            <Route
+              path="/fila"
+              element={<TicketList title="Fila de atendimento" emptyMessage="Nenhum chamado na fila." showClient />}
+            />
+          </Route>
+ 
           <Route element={<ProtectedRoute roles={[ROLES.ADMIN]} />}>
             <Route path="/admin/usuarios" element={<Users />} />
             <Route path="/admin/categorias" element={<Categories />} />
+            <Route
+              path="/admin/chamados"
+              element={<TicketList title="Todos os chamados" emptyMessage="Nenhum chamado cadastrado." showClient />}
+            />
           </Route>
  
           <Route path="*" element={<NotFound />} />
