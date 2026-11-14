@@ -22,9 +22,9 @@ const STATUS_OPTIONS = toOptions(STATUS)
 const PRIORIDADE_OPTIONS = toOptions(PRIORIDADES)
 
 const formatDate = (iso) => 
-    iso ? new Date(iso).toLocaleDateString('pt-BR', {dataStyle: 'short', timeStyle: 'short'}) : '-'
+    iso ? new Date(iso).toLocaleString('pt-BR', {dateStyle: 'short', timeStyle: 'short'}) : '-'
 
-export default function TicketList({title, emptyMessage, showClient = false, canCreate = false}) { 
+export default function TicketList({title, emptyMessage, showClient = false, canCreate = false, onlyMine = false}) { 
     const navigate = useNavigate()
     const {state} = useLocation()
     const flash = state?.flash
@@ -56,6 +56,7 @@ export default function TicketList({title, emptyMessage, showClient = false, can
         if (filters.status) params.status = filters.status
         if (filters.prioridade) params.prioridade = filters.prioridade
         if (filters.categoriaId) params.categoriaId = filters.categoriaId
+        if (onlyMine) params.atribuidos = true
         const data = await listTickets(params)
         if (!cancelled) setTickets(data)
       } catch (err) {
@@ -69,9 +70,15 @@ export default function TicketList({title, emptyMessage, showClient = false, can
     return () => {
         cancelled = true
     }
-}, [busca, filters.status, filters.prioridade, filters.categoriaId])
+}, [busca, filters.status, filters.prioridade, filters.categoriaId, onlyMine])
 
 const hasFilters = Object.values(filters).some(Boolean)
+
+const onChange = (e) => setFilters((f) => ({ ...f, [e.target.name]: e.target.value }))
+const clearFilters = () => {
+  setFilters(EMPTY_FILTERS)
+  setBusca('')
+}
 
 const columns = [
     {key: 'id', header: '#'},
