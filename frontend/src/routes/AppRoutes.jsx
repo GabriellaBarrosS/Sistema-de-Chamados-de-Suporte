@@ -12,6 +12,8 @@ import Users from '../pages/admin/Users'
 import Categories from '../pages/admin/Categories'
 import NewTicket from '../pages/tickets/NewTicket'
 import TicketList from '../pages/tickets/TicketList'
+import Dashboard from '../pages/Dashboard'
+
  
 function PublicOnly({ children }) {
 const { user } = useAuth()
@@ -43,17 +45,18 @@ export default function AppRoutes() {
             emptyMessage="Você não tem chamados abertos."
             canCreate />} />
             <Route path="/chamados/novo" element={<NewTicket />} />
+            <Route path="/resumo" element={<Dashboard title="Meu resumo" totalLabel="Meus chamados" />} />
           </Route>
  
           {/* As telas de chamados do técnico*/}
             <Route element={<ProtectedRoute roles={[ROLES.TECNICO]} />}>
-            <Route
-              path="/fila"
-              element={<TicketList title="Fila de atendimento" emptyMessage="Nenhum chamado na fila." showClient />}
-            />
+            <Route path="/fila" element={<TicketList title="Fila de atendimento" emptyMessage="Nenhum chamado na fila." showClient />} />
+            <Route path="/atendimentos" element={<TicketList title="Meus atendimentos" emptyMessage="Você ainda não assumiu nenhum chamado." showClient onlyMine />} />
+            <Route path="/resumo-atendimentos" element={<Dashboard title="Resumo dos meus atendimentos" totalLabel="Meus atendimentos" />} />
           </Route>
  
           <Route element={<ProtectedRoute roles={[ROLES.ADMIN]} />}>
+            <Route path="/admin/dashboard" element={<Dashboard title="Dashboard" totalLabel="Total de chamados" />} />
             <Route path="/admin/usuarios" element={<Users />} />
             <Route path="/admin/categorias" element={<Categories />} />
             <Route
