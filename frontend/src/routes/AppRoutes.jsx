@@ -10,6 +10,7 @@ import Forbidden from '../pages/Forbidden'
 import NotFound from '../pages/NotFound'
 import Users from '../pages/admin/Users'
 import Categories from '../pages/admin/Categories'
+import TicketDetail from '../pages/TicketDetail' // <--- 1. Importe aqui
 
 function PublicOnly({ children }) {
   const { user } = useAuth()
@@ -35,6 +36,7 @@ export default function AppRoutes() {
           <Route path="/acesso-negado" element={<Forbidden />} />
 
           {/* As telas de chamados (cliente e técnico) entram aqui */}
+          <Route path="/chamados/:id" element={<TicketDetail />} />
 
           <Route element={<ProtectedRoute roles={[ROLES.ADMIN]} />}>
             <Route path="/admin/usuarios" element={<Users />} />
